@@ -1,5 +1,5 @@
 [project]
-name = "research-agent"
+name = "deepresearch"
 version = "0.1.0"
 description = "Autonomous AI research assistant using OpenAI Agents SDK and A2A protocol"
 authors = [
@@ -7,5 +7,6 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "openai-agents>=0.2.2",
     "pymupdf>=1.26.3",
 ]
