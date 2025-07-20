@@ -1,0 +1,11 @@
+[project]
+name = "research-agent"
+version = "0.1.0"
+description = "Autonomous AI research assistant using OpenAI Agents SDK and A2A protocol"
+authors = [
+    { name = "Kunmeer-SyedMohamedHyder", email = "syed-mohamed-hyder.kunmeer@hpe.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "pymupdf>=1.26.3",
+]
