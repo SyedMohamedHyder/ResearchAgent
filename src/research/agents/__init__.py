@@ -5,6 +5,10 @@ from .questionnaire import research_question_agent
 from .paper_summarizer import paper_summarizer_agent
 from .methodology_planner import methodology_planner_agent
 from .system_designer import system_design_agent
+from .expermient_conductor import experiment_conductor_agent
+from .results_analyzer import results_analyzer_agent
+from .abstract_generator import abstract_generator_agent
+from .reference_geneartor import reference_generator_agent
 
 __all__ = [
     "paper_summarizer_agent",
@@ -15,4 +19,8 @@ __all__ = [
     "hypothesis_generator_agent",
     "methodology_planner_agent",
     "system_design_agent",
+    "experiment_conductor_agent",
+    "results_analyzer_agent",
+    "abstract_generator_agent",
+    "reference_generator_agent",
 ]

@@ -5,12 +5,7 @@ from foundation import pdf
 
 from .pipeline import *
 from research.agents.response import *
-from research.agents import (
-    paper_summarizer_agent,
-    related_work_agent,
-    gap_identifier_agent,
-    research_question_agent,
-)
+from research.agents import *
 from .transformers import *
 
 
@@ -110,7 +105,7 @@ class ResearchCoordinator:
                         summaries=paper_summarizer_agent.name,
                     ),
                     self._make_agent_step(
-                        "Gap Identifier",
+                        "Gap Identification",
                         gap_identifier_agent,
                         summaries=paper_summarizer_agent.name,
                     ),
@@ -124,6 +119,66 @@ class ResearchCoordinator:
                 research_question_agent,
                 related_work=related_work_agent.name,
                 gaps=gap_identifier_agent.name,
+            )
+        )
+
+        pipeline.add_step(
+            self._make_agent_step(
+                "Hypotheses",
+                hypothesis_generator_agent,
+                questions=research_question_agent.name,
+                related_work=related_work_agent.name,
+                gaps=gap_identifier_agent.name
+            )
+        )
+
+        pipeline.add_step(
+            self._make_agent_step(
+                "Methodology",
+                methodology_planner_agent,
+                hypotheses=hypothesis_generator_agent.name
+            )
+        )
+
+        pipeline.add_step(
+            self._make_agent_step(
+                "Experiments",
+                experiment_conductor_agent,
+                system_design=system_design_agent.name,
+                hypotheses=hypothesis_generator_agent.name,
+                related_work=related_work_agent.name,
+                gaps=gap_identifier_agent.name,
+            )
+        )
+
+        pipeline.add_step(
+            self._make_agent_step(
+                "ResultsAnalysis",
+                results_analyzer_agent,
+                hypotheses=hypothesis_generator_agent.name,
+                system_design=system_design_agent.name,
+                experiment_results=experiment_conductor_agent.name
+            )
+        )
+
+        pipeline.add_step(
+            self._make_agent_step(
+                "Abstract",
+                abstract_generator_agent,
+                questions=research_question_agent.name,
+                system_design=system_design_agent.name,
+                results=experiment_conductor_agent.name
+            )
+        )
+
+        pipeline.add_step(
+        self._make_agent_step(
+                "References",
+                reference_generator_agent,
+                summary=paper_summarizer_agent.name,
+                related_work=related_work_agent.name,
+                gaps=gap_identifier_agent.name,
+                questions=research_question_agent.name
             )
         )
 
