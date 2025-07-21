@@ -142,6 +142,15 @@ class ResearchCoordinator:
 
         pipeline.add_step(
             self._make_agent_step(
+                "SystemDesign",
+                system_design_agent,
+                methodology=methodology_planner_agent.name,
+                hypotheses=hypothesis_generator_agent.name
+            )
+        )
+
+        pipeline.add_step(
+            self._make_agent_step(
                 "Experiments",
                 experiment_conductor_agent,
                 system_design=system_design_agent.name,
@@ -182,12 +191,42 @@ class ResearchCoordinator:
             )
         )
 
+        pipeline.add_step(
+            self._make_agent_step(
+                "Write Paper",
+                paper_writer_agent,
+                output_format="md",
+                abstract=abstract_generator_agent.name,
+                related_work=related_work_agent.name,
+                research_gaps=gap_identifier_agent.name,
+                research_questions=research_question_agent.name,
+                hypotheses=hypothesis_generator_agent.name,
+                methodology=methodology_planner_agent.name,
+                experiments=experiment_conductor_agent.name,
+                results_analysis=results_analyzer_agent.name,
+                references=reference_generator_agent.name,
+            )
+        )
+
         return pipeline
 
-    def _make_agent_step(self, name: str, agent: Agent, **input_sources) -> AgentStep:
+    def _make_agent_step(self, name: str, agent: Agent, output_format="json", **input_sources) -> AgentStep:
+        """
+        Creates a configured AgentStep for a given agent with transformed input and output.
+
+        Args:
+            name (str): The name of the step in the pipeline.
+            agent (Agent): The agent instance to execute for this step.
+            output_format (str, optional): Format to parse the agent's output (e.g., "json", "text"). Defaults to "json".
+            **input_sources: Keyword arguments mapping input field names to the names of previous steps
+                            whose outputs will be passed as inputs to this agent.
+
+        Returns:
+            AgentStep: A fully initialized step with input and output transformers ready for pipeline execution.
+        """
         return AgentStep(
             name=name,
             agent=agent,
             input_transformer=input_transformer(**input_sources),
-            output_transformer=output_transformer(agent.name),
+            output_transformer=output_transformer(agent.name, output_format=output_format),
         )

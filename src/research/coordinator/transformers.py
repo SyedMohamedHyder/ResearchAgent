@@ -60,26 +60,34 @@ def input_transformer(**input_sources: str) -> Callable[[dict], str]:
     return transformer
 
 
-def output_transformer(agent_name: str) -> Callable[[dict, Any], None]:
+def output_transformer(agent_name: str, output_format="json") -> Callable[[dict, Any], None]:
     """
-    Returns a transformer that writes agent output to a JSON file in the `outputs/` directory.
+    Creates a transformer function that writes the output of an agent to a file in the `outputs/` directory.
 
     Args:
-        agent_name: The name of the agent. This will be used as the output file name.
+        agent_name (str): The name of the agent. Used to name the output file.
+        output_format (str, optional): Format of the output file. Either "json" or plain text. Defaults to "json".
 
     Returns:
-        A function that takes a context and output, and writes the output to `outputs/{agent_name}.json`.
+        Callable[[dict, Any], None]: A transformer function that takes the execution context and the agent output,
+        and writes the output to `outputs/{agent_name}.{output_format}`.
+
+    Raises:
+        Exception: If writing to the file fails, the exception is logged and re-raised.
     """
     def transformer(_: dict, output: Any) -> None:
         try:
-            path = Path("outputs", f"{agent_name}.json")
+            path = Path("outputs", f"{agent_name}.{output_format}")
             path.parent.mkdir(parents=True, exist_ok=True)
 
             with path.open("w", encoding="utf-8") as f:
-                json.dump(serialize_model(output), f, indent=2, ensure_ascii=False)
+                if output_format == "json":
+                    json.dump(serialize_model(output), f, indent=2, ensure_ascii=False)
+                else:
+                    f.write(output)
 
         except Exception as e:
-            print(f"[output_transformer] Failed to write to {agent_name}.json: {e}")
+            print(f"[output_transformer] Failed to write to {agent_name}.{output_format}: {e}")
             raise
 
     return transformer
